@@ -1,0 +1,15 @@
+﻿@model Ajax.Models.TodoItem
+@{
+    var css = Model.IsDone ? "done" : null;
+}
+
+<tr class="@css" id="item-@Model.Id">
+    <td>@Model.Priority</td>
+    <td>@Model.Description</td>
+    <td class="tools">
+        @{ 
+            var text = Model.IsDone ? "Undo" : "Done";
+        }
+        <a href="#" data-id="@Model.Id">@text</a>
+    </td>
+</tr>

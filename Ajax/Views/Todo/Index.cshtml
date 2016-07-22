@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Ajax.Models.TodoItem>
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<h2>To-do items</h2>
+<table id="items">
+    <tr>
+        <th>Priority</th>
+        <th>Description</th>
+        <th>Actions</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        @Html.Partial("_TodoItem", item)
+    }
+    <tr id="input">
+        <td>
+            <select id="priority">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </td>
+        <td><input type="text" id="description"/></td>
+        <td><input type="button" value="Add" id="addItem"/></td>
+    </tr>
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(function () {
+            // Initialization code
+            $("#addItem").click(addItemClick);
+            $("#items").on("click", "a", itemDoneClick);
+        });
+
+        function addItemClick() {
+            var data = {
+                priority: $("#priority").val(),
+                description: $("#description").val()
+            };
+            $.ajax({
+                url: "@Url.Action("Create", "Todo")",
+                type: "post",
+                data: data,
+                success: function (html) {
+                    var elem = $(html);
+                    elem.insertBefore($("#input"));
+                    $("#description").val("");
+                    $("#priority").val("1");
+                }
+            });
+            return false;
+        }
+
+        function itemDoneClick() {
+            var id = $(this).data("id");
+            $.ajax({
+                url: "@Url.Action("ToggleDone", "Todo")",
+                data: { id: id },
+                type: "post",
+                success: function (html) {
+                    $("#item-" + id).replaceWith(html);
+                }
+            });
+            return false;
+        }
+
+    </script>
+    }
